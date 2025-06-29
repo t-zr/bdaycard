@@ -112,28 +112,11 @@
       border-top: 8px solid currentColor;
     }
 
-    .balloon-string {
-      position: absolute;
-      bottom: -80px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 1px;
-      height: 120px;
-      background: linear-gradient(to bottom, #333 0%, #666 50%, transparent 100%);
-      animation: stringFloat 5s ease-in-out infinite;
-      transform-origin: top center;
-    }
-
     @keyframes float {
       0%, 100% { transform: translateY(0) translateX(-5px) rotate(-2deg); }
       25% { transform: translateY(-20px) translateX(5px) rotate(2deg); }
       50% { transform: translateY(-15px) translateX(-3px) rotate(-1deg); }
       75% { transform: translateY(-25px) translateX(3px) rotate(1deg); }
-    }
-
-    @keyframes stringFloat {
-      0%, 100% { transform: translateX(-50%) rotate(2deg); }
-      50% { transform: translateX(-50%) rotate(-2deg); }
     }
 
     #form {
@@ -276,7 +259,7 @@
     }
 
     @keyframes confetti-fall {
-      0% { transform: translateY(-20px) translateX(0px) rotateZ(0deg); opacity: 1; }
+      0% { transform: translateY(0) translateX(0px) rotateZ(0deg); opacity: 1; }
       10% { transform: translateY(10vh) translateX(10px) rotateZ(36deg); }
       20% { transform: translateY(20vh) translateX(-5px) rotateZ(72deg); }
       30% { transform: translateY(30vh) translateX(15px) rotateZ(108deg); }
@@ -286,7 +269,7 @@
       70% { transform: translateY(70vh) translateX(6px) rotateZ(252deg); }
       80% { transform: translateY(80vh) translateX(-8px) rotateZ(288deg); }
       90% { transform: translateY(90vh) translateX(4px) rotateZ(324deg); }
-      100% { transform: translateY(110vh) translateX(0px) rotateZ(360deg); opacity: 0; }
+      100% { transform: translateY(100vh) translateX(0px) rotateZ(360deg); opacity: 0; }
     }
 
     @keyframes confetti-rotate {
@@ -301,7 +284,7 @@
       position: absolute;
       width: 4px;
       height: 4px;
-      border-radius: (ep
+      border-radius: 50%;
       animation: firework 1.5s ease-out;
     }
 
@@ -327,20 +310,31 @@
       position: fixed;
       top: 60px;
       right: 20px;
-      background: rgba(0, 0, 0, 0.7);
+      background: linear-gradient(45deg, #ff69b4, #ffd700);
       color: white;
       padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 14px;
+      border-radius: 50%;
+      font-size: 16px;
       z-index: 1000;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.5);
       cursor: pointer;
       display: none;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease, background 0.3s ease;
     }
 
     #playAudio:hover {
-      background: rgba(0, 0, 0, 0.9);
-      transform: translateY(-2px);
+      background: linear-gradient(45deg, #ff1493, #ffcc33);
+      transform: scale(1.1);
+    }
+
+    #playAudio::before {
+      content: '▶';
+      font-size: 18px;
     }
   </style>
 </head>
@@ -356,7 +350,7 @@
   <div id="helloContainer"></div>
   <div id="confetti"></div>
   <div id="audioStatus"></div>
-  <button id="playAudio">▶ Play Audio</button>
+  <button id="playAudio"></button>
 
   <script>
     function createStarfield() {
@@ -396,12 +390,7 @@
         balloon.style.color = colors[i % colors.length];
         balloon.style.animationDelay = `${Math.random() * 3}s`;
 
-        const string = document.createElement('div');
-        string.className = 'balloon-string';
-        string.style.animationDelay = balloon.style.animationDelay;
-
         balloonWrapper.appendChild(balloon);
-        balloonWrapper.appendChild(string);
         balloonContainer.appendChild(balloonWrapper);
       }
     }
@@ -419,7 +408,7 @@
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         confetti.style.color = confetti.style.backgroundColor;
         confetti.style.left = `${Math.random() * 100}vw`;
-        confetti.style.top = `${-Math.random() * 30}px`;
+        confetti.style.top = `${Math.random() * 100}vh`; // Start anywhere on screen
 
         const fallDuration = 5000 + Math.random() * 3000;
         const rotateDuration = 1500 + Math.random() * 2500;
@@ -467,7 +456,7 @@
         if (audioContext.state === 'suspended') {
           audioStatus.textContent = '🔇 Audio blocked. Click Play button.';
           audioStatus.style.background = 'rgba(255, 100, 100, 0.8)';
-          playButton.style.display = 'block';
+          playButton.style.display = 'flex';
           playButton.onclick = () => {
             audioContext.resume().then(() => {
               playMelody(audioContext, audioStatus, playButton);
@@ -486,7 +475,7 @@
         console.log('Audio error:', e);
         audioStatus.textContent = '🔇 Audio blocked. Click Play button.';
         audioStatus.style.background = 'rgba(255, 100, 100, 0.8)';
-        playButton.style.display = 'block';
+        playButton.style.display = 'flex';
         playButton.onclick = () => {
           try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
