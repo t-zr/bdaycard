@@ -62,7 +62,7 @@ animation: twinkle 2s infinite;
 50% { opacity: 1; transform: scale(1.2); }
 }
 
-/* Birthday balloons */
+/* Birthday balloons - improved design */
 #balloons {
 position: absolute;
 top: 0; left: 0;
@@ -73,27 +73,63 @@ pointer-events: none;
 
 .balloon {
 position: absolute;
-width: 60px;
-height: 80px;
+width: 50px;
+height: 70px;
 border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-animation: float 6s ease-in-out infinite;
-opacity: 0.8;
+animation: float 4s ease-in-out infinite;
+opacity: 0.9;
+box-shadow:
+inset -10px -10px 0 rgba(0,0,0,0.1),
+0 5px 15px rgba(0,0,0,0.3);
+background: linear-gradient(135deg, currentColor 0%, transparent 50%, rgba(255,255,255,0.3) 70%);
+}
+
+.balloon::before {
+content: ‘’;
+position: absolute;
+top: 15%;
+left: 20%;
+width: 15px;
+height: 20px;
+background: rgba(255,255,255,0.4);
+border-radius: 50%;
+transform: rotate(-45deg);
 }
 
 .balloon::after {
 content: ‘’;
 position: absolute;
-bottom: -20px;
+bottom: -8px;
 left: 50%;
 transform: translateX(-50%);
-width: 2px;
-height: 100px;
-background: #333;
+width: 0;
+height: 0;
+border-left: 6px solid transparent;
+border-right: 6px solid transparent;
+border-top: 8px solid currentColor;
+}
+
+.balloon-string {
+position: absolute;
+bottom: -8px;
+left: 50%;
+transform: translateX(-50%);
+width: 1px;
+height: 120px;
+background: linear-gradient(to bottom, #666 0%, transparent 100%);
+animation: stringFloat 4s ease-in-out infinite;
 }
 
 @keyframes float {
-0%, 100% { transform: translateY(0px) rotate(-2deg); }
-50% { transform: translateY(-20px) rotate(2deg); }
+0%, 100% { transform: translateY(0px) rotate(-1deg); }
+25% { transform: translateY(-15px) rotate(1deg); }
+50% { transform: translateY(-10px) rotate(-0.5deg); }
+75% { transform: translateY(-20px) rotate(0.5deg); }
+}
+
+@keyframes stringFloat {
+0%, 100% { transform: translateX(-50%) rotate(1deg); }
+50% { transform: translateX(-50%) rotate(-1deg); }
 }
 
 #form {
@@ -294,21 +330,31 @@ opacity: 0;
     }
   }
 
-  // Create birthday balloons
+  // Create birthday balloons with improved design
   function createBalloons() {
     const balloonContainer = document.getElementById('balloons');
     balloonContainer.innerHTML = '';
     
-    const colors = ['#ff69b4', '#ffd700', '#ff6347', '#40e0d0', '#9370db', '#32cd32'];
+    const colors = ['#ff69b4', '#ffd700', '#ff6347', '#40e0d0', '#9370db', '#32cd32', '#ff1493', '#00ced1'];
     
-    for(let i = 0; i < 6; i++) {
+    for(let i = 0; i < 8; i++) {
+      const balloonWrapper = document.createElement('div');
+      balloonWrapper.style.position = 'absolute';
+      balloonWrapper.style.left = `${5 + i * 11}%`;
+      balloonWrapper.style.top = `${Math.random() * 15 + 5}%`;
+      
       const balloon = document.createElement('div');
       balloon.className = 'balloon';
-      balloon.style.backgroundColor = colors[i];
-      balloon.style.left = `${10 + i * 15}%`;
-      balloon.style.top = `${Math.random() * 20 + 10}%`;
+      balloon.style.color = colors[i];
       balloon.style.animationDelay = `${Math.random() * 2}s`;
-      balloonContainer.appendChild(balloon);
+      
+      const string = document.createElement('div');
+      string.className = 'balloon-string';
+      string.style.animationDelay = `${Math.random() * 2}s`;
+      
+      balloonWrapper.appendChild(balloon);
+      balloonWrapper.appendChild(string);
+      balloonContainer.appendChild(balloonWrapper);
     }
   }
 
@@ -358,45 +404,72 @@ opacity: 0;
     }
   }
 
-  // Play Happy Birthday song
+  // Play Happy Birthday song with visual feedback
   function playHappyBirthday() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // Show audio status
+    const audioStatus = document.createElement('div');
+    audioStatus.style.position = 'fixed';
+    audioStatus.style.top = '20px';
+    audioStatus.style.right = '20px';
+    audioStatus.style.background = 'rgba(0,0,0,0.7)';
+    audioStatus.style.color = 'white';
+    audioStatus.style.padding = '10px 15px';
+    audioStatus.style.borderRadius = '20px';
+    audioStatus.style.fontSize = '14px';
+    audioStatus.style.zIndex = '1000';
+    audioStatus.textContent = '🎵 Playing Happy Birthday...';
+    document.body.appendChild(audioStatus);
     
-    // Happy Birthday melody (simplified notes in Hz)
-    const notes = [
-      261.63, 261.63, 293.66, 261.63, 349.23, 329.63, // Happy birthday to you
-      261.63, 261.63, 293.66, 261.63, 392.00, 349.23, // Happy birthday to you
-      261.63, 261.63, 523.25, 440.00, 349.23, 329.63, 293.66, // Happy birthday dear [name]
-      466.16, 466.16, 440.00, 349.23, 392.00, 349.23  // Happy birthday to you
-    ];
-    
-    const durations = [
-      0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
-      0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
-      0.5, 0.25, 0.75, 0.75, 0.75, 0.75, 1.5,
-      0.5, 0.25, 0.75, 0.75, 0.75, 1.5
-    ];
-    
-    let currentTime = audioContext.currentTime;
-    
-    notes.forEach((frequency, index) => {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      // Happy Birthday melody (simplified notes in Hz)
+      const notes = [
+        261.63, 261.63, 293.66, 261.63, 349.23, 329.63, // Happy birthday to you
+        261.63, 261.63, 293.66, 261.63, 392.00, 349.23, // Happy birthday to you
+        261.63, 261.63, 523.25, 440.00, 349.23, 329.63, 293.66, // Happy birthday dear [name]
+        466.16, 466.16, 440.00, 349.23, 392.00, 349.23  // Happy birthday to you
+      ];
       
-      oscillator.frequency.value = frequency;
-      oscillator.type = 'sine';
+      const durations = [
+        0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
+        0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
+        0.5, 0.25, 0.75, 0.75, 0.75, 0.75, 1.5,
+        0.5, 0.25, 0.75, 0.75, 0.75, 1.5
+      ];
       
-      gainNode.gain.setValueAtTime(0.3, currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + durations[index]);
+      let currentTime = audioContext.currentTime;
       
-      oscillator.start(currentTime);
-      oscillator.stop(currentTime + durations[index]);
+      notes.forEach((frequency, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'triangle'; // Softer sound
+        
+        gainNode.gain.setValueAtTime(0.2, currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + durations[index]);
+        
+        oscillator.start(currentTime);
+        oscillator.stop(currentTime + durations[index]);
+        
+        currentTime += durations[index];
+      });
       
-      currentTime += durations[index];
-    });
+      // Remove status after song duration
+      setTimeout(() => {
+        audioStatus.textContent = '🎵 Song complete!';
+        setTimeout(() => document.body.removeChild(audioStatus), 2000);
+      }, currentTime * 1000);
+      
+    } catch(e) {
+      audioStatus.textContent = '🔇 Audio blocked by browser';
+      audioStatus.style.background = 'rgba(255,100,100,0.8)';
+      setTimeout(() => document.body.removeChild(audioStatus), 3000);
+    }
   }
 
   // Parse URL query parameters
@@ -456,7 +529,7 @@ opacity: 0;
     }
 
     const message = isBday
-      ? `HAPPY BIRTHDAY ${name.toUpperCase()}! 🎉🎂🎈`
+      ? `HAPPY BIRTHDAY ${name.toUpperCase()}!` 
       : `HELLO ${name.toUpperCase()}`;
 
     message.split('').forEach((char, i) => {
