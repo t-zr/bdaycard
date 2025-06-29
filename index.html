@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hello!</title>
+  <title>Hello</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
 
@@ -14,7 +14,6 @@
       width: 100vw;
       overflow: hidden;
       font-family: 'Orbitron', sans-serif;
-      color: #b71c1c;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -132,6 +131,13 @@
       box-sizing: border-box;
     }
 
+    #form h1 {
+      color: #e0e0ff;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      font-size: 1.5em;
+      margin: 0.5em 0;
+    }
+
     input, button {
       padding: 12px;
       font-size: 1.1em;
@@ -154,7 +160,7 @@
 
     button {
       cursor: pointer;
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      background: linear-gradient(45deg, #1a1a2e, #483d8b);
       color: white;
       font-weight: bold;
       transition: all 0.3s ease;
@@ -164,6 +170,7 @@
     button:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(45deg, #483d8b, #6a5acd);
     }
 
     #helloContainer {
@@ -304,37 +311,24 @@
       font-size: 14px;
       z-index: 1000;
       display: none;
+      transition: all 0.3s ease;
     }
 
-    #playAudio {
-      position: fixed;
-      top: 60px;
-      right: 20px;
+    #audioStatus.blocked {
       background: linear-gradient(45deg, #ff69b4, #ffd700);
-      color: white;
-      padding: 8px 12px;
-      border-radius: 50%;
-      font-size: 16px;
-      z-index: 1000;
-      border: 2px solid rgba(255, 255, 255, 0.5);
       cursor: pointer;
-      display: none;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease, background 0.3s ease;
+      padding: 8px 15px;
+      border: 2px solid rgba(255, 255, 255, 0.5);
     }
 
-    #playAudio:hover {
+    #audioStatus.blocked:hover {
       background: linear-gradient(45deg, #ff1493, #ffcc33);
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
 
-    #playAudio::before {
-      content: '▶';
-      font-size: 18px;
+    #audioStatus.blocked::before {
+      content: '▶ ';
+      font-size: 14px;
     }
   </style>
 </head>
@@ -350,7 +344,6 @@
   <div id="helloContainer"></div>
   <div id="confetti"></div>
   <div id="audioStatus"></div>
-  <button id="playAudio"></button>
 
   <script>
     function createStarfield() {
@@ -408,7 +401,7 @@
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         confetti.style.color = confetti.style.backgroundColor;
         confetti.style.left = `${Math.random() * 100}vw`;
-        confetti.style.top = `${Math.random() * 100}vh`; // Start anywhere on screen
+        confetti.style.top = `${Math.random() * 100}vh`;
 
         const fallDuration = 5000 + Math.random() * 3000;
         const rotateDuration = 1500 + Math.random() * 2500;
@@ -446,7 +439,6 @@
 
     function playHappyBirthday() {
       const audioStatus = document.getElementById('audioStatus');
-      const playButton = document.getElementById('playAudio');
       audioStatus.style.display = 'block';
       audioStatus.textContent = '🎵 Attempting to play Happy Birthday...';
 
@@ -454,47 +446,48 @@
       try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         if (audioContext.state === 'suspended') {
-          audioStatus.textContent = '🔇 Audio blocked. Click Play button.';
-          audioStatus.style.background = 'rgba(255, 100, 100, 0.8)';
-          playButton.style.display = 'flex';
-          playButton.onclick = () => {
+          audioStatus.textContent = '🔇 Click to play Happy Birthday';
+          audioStatus.className = 'blocked';
+          audioStatus.onclick = () => {
             audioContext.resume().then(() => {
-              playMelody(audioContext, audioStatus, playButton);
+              playMelody(audioContext, audioStatus);
             }).catch(err => {
               console.log('Audio resume error:', err);
               audioStatus.textContent = '🔇 Audio failed. Try again.';
               setTimeout(() => {
                 audioStatus.style.display = 'none';
+                audioStatus.className = '';
               }, 3000);
             });
           };
         } else {
-          playMelody(audioContext, audioStatus, playButton);
+          playMelody(audioContext, audioStatus);
         }
       } catch (e) {
         console.log('Audio error:', e);
-        audioStatus.textContent = '🔇 Audio blocked. Click Play button.';
-        audioStatus.style.background = 'rgba(255, 100, 100, 0.8)';
-        playButton.style.display = 'flex';
-        playButton.onclick = () => {
+        audioStatus.textContent = '🔇 Click to play Happy Birthday';
+        audioStatus.className = 'blocked';
+        audioStatus.onclick = () => {
           try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            playMelody(audioContext, audioStatus, playButton);
+            playMelody(audioContext, audioStatus);
           } catch (err) {
             console.log('Audio retry error:', err);
             audioStatus.textContent = '🔇 Audio failed. Try again.';
             setTimeout(() => {
               audioStatus.style.display = 'none';
+              audioStatus.className = '';
             }, 3000);
           }
         };
       }
     }
 
-    function playMelody(audioContext, audioStatus, playButton) {
+    function playMelody(audioContext, audioStatus) {
+      audioStatus.className = '';
       audioStatus.style.background = 'rgba(0, 0, 0, 0.7)';
       audioStatus.textContent = '🎵 Playing Happy Birthday...';
-      playButton.style.display = 'none';
+      audioStatus.onclick = null;
       console.log('Playing melody with AudioContext state:', audioContext.state);
 
       const notes = [
@@ -553,6 +546,7 @@
       const container = document.getElementById('helloContainer');
       container.style.opacity = 1;
       container.innerHTML = '';
+      const audioStatus = document.getElementById('audioStatus');
 
       if (isBday) {
         document.body.className = 'birthday-bg';
@@ -573,6 +567,9 @@
         document.getElementById('starfield').style.display = 'block';
         document.getElementById('balloons').innerHTML = '';
         document.getElementById('confetti').innerHTML = '';
+        audioStatus.style.display = 'none';
+        audioStatus.className = '';
+        audioStatus.onclick = null;
       }
 
       const message = isBday ? `HAPPY BIRTHDAY ${name.toUpperCase()}!` : `HELLO ${name.toUpperCase()}`;
