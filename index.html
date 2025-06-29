@@ -23,12 +23,10 @@
       box-sizing: border-box;
     }
 
-    /* Default background */
     .normal-bg {
       background: radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
     }
 
-    /* Subtle birthday background */
     .birthday-bg {
       background:
         radial-gradient(circle at 30% 70%, rgba(255, 182, 193, 0.3) 0%, transparent 50%),
@@ -116,7 +114,7 @@
 
     .balloon-string {
       position: absolute;
-      bottom: -9px;
+      bottom: -80px;
       left: 50%;
       transform: translateX(-50%);
       width: 1px;
@@ -303,13 +301,46 @@
       position: absolute;
       width: 4px;
       height: 4px;
-      border-radius: 50%;
+      border-radius: (ep
       animation: firework 1.5s ease-out;
     }
 
     @keyframes firework {
       0% { transform: scale(1); opacity: 1; }
       100% { transform: scale(50); opacity: 0; }
+    }
+
+    #audioStatus {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+      display: none;
+    }
+
+    #playAudio {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      display: none;
+    }
+
+    #playAudio:hover {
+      background: rgba(0, 0, 0, 0.9);
+      transform: translateY(-2px);
     }
   </style>
 </head>
@@ -324,6 +355,8 @@
   </div>
   <div id="helloContainer"></div>
   <div id="confetti"></div>
+  <div id="audioStatus"></div>
+  <button id="playAudio">▶ Play Audio</button>
 
   <script>
     function createStarfield() {
@@ -423,43 +456,58 @@
     }
 
     function playHappyBirthday() {
-      const audioStatus = document.createElement('div');
-      audioStatus.style.position = 'fixed';
-      audioStatus.style.top = '20px';
-      audioStatus.style.right = '20px';
-      audioStatus.style.background = 'rgba(0, 0, 0, 0.7)';
-      audioStatus.style.color = 'white';
-      audioStatus.style.padding = '10px 15px';
-      audioStatus.style.borderRadius = '20px';
-      audioStatus.style.fontSize = '14px';
-      audioStatus.style.zIndex = '1000';
+      const audioStatus = document.getElementById('audioStatus');
+      const playButton = document.getElementById('playAudio');
+      audioStatus.style.display = 'block';
       audioStatus.textContent = '🎵 Attempting to play Happy Birthday...';
-      document.body.appendChild(audioStatus);
 
+      let audioContext;
       try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
         if (audioContext.state === 'suspended') {
-          audioContext.resume().then(() => playMelody(audioContext, audioStatus));
+          audioStatus.textContent = '🔇 Audio blocked. Click Play button.';
+          audioStatus.style.background = 'rgba(255, 100, 100, 0.8)';
+          playButton.style.display = 'block';
+          playButton.onclick = () => {
+            audioContext.resume().then(() => {
+              playMelody(audioContext, audioStatus, playButton);
+            }).catch(err => {
+              console.log('Audio resume error:', err);
+              audioStatus.textContent = '🔇 Audio failed. Try again.';
+              setTimeout(() => {
+                audioStatus.style.display = 'none';
+              }, 3000);
+            });
+          };
         } else {
-          playMelody(audioContext, audioStatus);
+          playMelody(audioContext, audioStatus, playButton);
         }
       } catch (e) {
-        audioStatus.textContent = '🔇 Audio blocked by browser. Click anywhere to try again.';
+        console.log('Audio error:', e);
+        audioStatus.textContent = '🔇 Audio blocked. Click Play button.';
         audioStatus.style.background = 'rgba(255, 100, 100, 0.8)';
-        document.body.addEventListener('click', () => {
+        playButton.style.display = 'block';
+        playButton.onclick = () => {
           try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            playMelody(audioContext, audioStatus);
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            playMelody(audioContext, audioStatus, playButton);
           } catch (err) {
-            console.log('Audio error:', err);
+            console.log('Audio retry error:', err);
+            audioStatus.textContent = '🔇 Audio failed. Try again.';
+            setTimeout(() => {
+              audioStatus.style.display = 'none';
+            }, 3000);
           }
-        }, { once: true });
-        setTimeout(() => document.body.removeChild(audioStatus), 5000);
+        };
       }
     }
 
-    function playMelody(audioContext, audioStatus) {
+    function playMelody(audioContext, audioStatus, playButton) {
+      audioStatus.style.background = 'rgba(0, 0, 0, 0.7)';
       audioStatus.textContent = '🎵 Playing Happy Birthday...';
+      playButton.style.display = 'none';
+      console.log('Playing melody with AudioContext state:', audioContext.state);
+
       const notes = [
         261.63, 261.63, 293.66, 261.63, 349.23, 329.63,
         261.63, 261.63, 293.66, 261.63, 392.00, 349.23,
@@ -490,7 +538,9 @@
 
       setTimeout(() => {
         audioStatus.textContent = '🎵 Song complete!';
-        setTimeout(() => document.body.removeChild(audioStatus), 2000);
+        setTimeout(() => {
+          audioStatus.style.display = 'none';
+        }, 2000);
       }, currentTime * 1000);
     }
 
@@ -520,11 +570,7 @@
         document.getElementById('starfield').style.display = 'none';
         createBalloons();
         createConfetti(100);
-        try {
-          playHappyBirthday();
-        } catch (e) {
-          console.log('Audio not supported or blocked');
-        }
+        playHappyBirthday();
         const fireworkInterval = setInterval(() => {
           const x = Math.random() * window.innerWidth;
           const y = Math.random() * window.innerHeight * 0.7;
