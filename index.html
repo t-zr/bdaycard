@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Exploding Space Hello</title>
+<title>Exploding Space Hello & Birthday</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
 
@@ -20,6 +20,7 @@
     flex-direction: column;
   }
 
+  /* Starfield */
   #starfield {
     position: fixed;
     top: 0; left: 0;
@@ -44,6 +45,7 @@
     50% {opacity: 0.2;}
   }
 
+  /* Form styling */
   #form {
     z-index: 10;
     text-align: center;
@@ -64,6 +66,7 @@
     font-weight: bold;
   }
 
+  /* Hello container */
   #helloContainer {
     position: relative;
     display: flex;
@@ -80,6 +83,54 @@
     transform: translate(0, 0) scale(0);
     opacity: 0;
   }
+
+  /* Birthday theme overrides */
+  body.bday {
+    background: radial-gradient(ellipse at bottom, #330022 0%, #000000 90%);
+    color: #ffdd55;
+  }
+  body.bday button {
+    background: #ff4400;
+  }
+  body.bday #helloContainer .letter {
+    text-shadow:
+      0 0 5px #ffcc33,
+      0 0 10px #ffcc33,
+      0 0 20px #ff6600,
+      0 0 30px #ff3300;
+  }
+
+  /* Confetti container */
+  #confetti {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 20;
+    overflow: visible;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 14px;
+    background-color: #ffcc33;
+    opacity: 0.9;
+    transform-origin: center;
+    animation-name: confetti-fall, confetti-rotate;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes confetti-fall {
+    0% { transform: translateY(-20px); opacity: 1; }
+    100% { transform: translateY(110vh); opacity: 0; }
+  }
+  @keyframes confetti-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
 </style>
 </head>
 <body>
@@ -94,6 +145,8 @@
 </div>
 
 <div id="helloContainer"></div>
+
+<div id="confetti"></div>
 
 <script>
   // Create starfield
@@ -113,21 +166,81 @@
     starfield.appendChild(star);
   }
 
+  // Parse URL query parameters
+  function getQueryParams() {
+    const params = {};
+    location.search.slice(1).split('&').forEach(pair => {
+      const [key, value] = pair.split('=');
+      if(key) params[key] = decodeURIComponent(value || '');
+    });
+    return params;
+  }
+
+  // Confetti generator
+  function createConfetti(num = 30) {
+    const confettiContainer = document.getElementById('confetti');
+    confettiContainer.innerHTML = ''; // Clear previous
+
+    for(let i = 0; i < num; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti-piece');
+
+      // Randomize color
+      const colors = ['#ffcc33','#ff4444','#44ff44','#4444ff','#ff44ff','#44ffff'];
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+      // Random position
+      confetti.style.left = `${Math.random() * 100}vw`;
+      confetti.style.top = `${-Math.random() * 20}px`;
+
+      // Random size
+      const width = 5 + Math.random() * 8;
+      const height = 10 + Math.random() * 10;
+      confetti.style.width = `${width}px`;
+      confetti.style.height = `${height}px`;
+
+      // Animations duration and delay
+      const fallDuration = 3000 + Math.random() * 2000;
+      confetti.style.animationDuration = `${fallDuration}ms, ${fallDuration/2}ms`;
+      confetti.style.animationDelay = `${Math.random() * 3000}ms, 0ms`;
+
+      confettiContainer.appendChild(confetti);
+    }
+  }
+
   function start() {
     const name = document.getElementById('nameInput').value.trim();
     if (!name) return;
 
+    showGreeting(name, false);
+  }
+
+  // Show greeting with exploding animation
+  function showGreeting(name, isBday) {
     document.getElementById('form').style.display = 'none';
     const container = document.getElementById('helloContainer');
     container.style.opacity = 1;
-    const message = `HELLO ${name.toUpperCase()}`;
+    container.innerHTML = '';
+
+    // Add birthday class for styles
+    if (isBday) {
+      document.body.classList.add('bday');
+      createConfetti(50);
+    } else {
+      document.body.classList.remove('bday');
+      document.getElementById('confetti').innerHTML = '';
+    }
+
+    const message = isBday
+      ? `HAPPY BIRTHDAY ${name.toUpperCase()}! 🎉🎂`
+      : `HELLO ${name.toUpperCase()}`;
 
     message.split('').forEach((char, i) => {
       const span = document.createElement('span');
       span.className = 'letter';
       span.textContent = char === ' ' ? '\u00A0' : char;
 
-      // Explode from random spots around the screen edges
+      // Explode from random spots around screen edges
       const angle = Math.random() * 2 * Math.PI;
       const radius = 800;
       const x = Math.cos(angle) * radius;
@@ -144,6 +257,14 @@
       }, i * 100);
     });
   }
+
+  // On load: check URL params for birthday mode
+  window.onload = () => {
+    const params = getQueryParams();
+    if(params.bday === 'true' && params.name) {
+      showGreeting(params.name, true);
+    }
+  };
 </script>
 
 </body>
