@@ -3,194 +3,190 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hello</title>
+  <title>Birthday Card</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
       padding: 0;
+      height: 100vh;
       font-family: 'Orbitron', sans-serif;
       background: radial-gradient(circle, #fff0f5, #ffe4e1);
-      height: 100vh;
       overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    #form {
-      text-align: center;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 2vw;
-      border-radius: 15px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      width: 90%;
-      max-width: 400px;
-      z-index: 10;
+    #birthdayCard {
+      position: relative;
+      width: 600px;
+      height: 400px;
+      perspective: 2000px;
     }
 
-    input, button {
-      padding: 12px;
-      margin-top: 1em;
-      font-size: 1.1em;
+    .book {
       width: 100%;
-      border-radius: 8px;
-      border: none;
-      box-sizing: border-box;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 1.5s ease;
     }
 
-    input {
-      background: rgba(0, 0, 0, 0.3);
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-    }
-
-    input::placeholder {
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    button {
-      background: linear-gradient(45deg, #ff69b4, #ff1493);
+    .cover {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #ff69b4, #ffb6c1);
       color: white;
       font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: linear-gradient(45deg, #ff1493, #ff69b4);
-    }
-
-    #birthdayCard {
-      display: none;
-      position: absolute;
-      width: 300px;
-      height: 400px;
-      perspective: 1500px;
-    }
-
-    .card-inner {
-      width: 100%;
-      height: 100%;
-      transition: transform 1s;
-      transform-style: preserve-3d;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .card-front, .card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 12px;
-      backface-visibility: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      padding: 20px;
-      box-sizing: border-box;
+      align-items: center;
+      backface-visibility: hidden;
+      transform-origin: left;
+      z-index: 3;
+      border-radius: 8px;
       text-align: center;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
     }
 
-    .card-front {
-      background: linear-gradient(45deg, #ff69b4, #ffb6c1);
-      color: white;
+    .cover h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
     }
 
-    .card-front h1 {
-      font-size: 1.8em;
-    }
-
-    .card-front small {
-      margin-top: 10px;
+    .cover small {
+      font-size: 0.9em;
       opacity: 0.8;
     }
 
-    .card-back {
+    .page {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      top: 0;
       background: white;
-      transform: rotateY(180deg);
-      color: #ff1493;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      backface-visibility: hidden;
+      border-radius: 8px;
     }
 
-    .card-inner.open {
+    .left-page {
+      left: 0;
+      transform-origin: left;
+      background: #fff8fb;
+      z-index: 1;
+    }
+
+    .right-page {
+      right: 0;
       transform: rotateY(180deg);
+      transform-origin: right;
+      background: #fff;
+      z-index: 1;
+    }
+
+    .book.open {
+      transform: rotateY(180deg);
+    }
+
+    .emoji-deco {
+      font-size: 2em;
+      margin-bottom: 1em;
+    }
+
+    .card-message {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #ff1493;
+      text-align: center;
+      text-shadow:
+        0 0 5px #ff69b4,
+        0 0 10px #ff1493,
+        0 0 20px #ff69b4;
+    }
+
+    .decor {
+      font-size: 1.5em;
+      text-align: center;
+      color: #ff69b4;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     .confetti {
       position: fixed;
       top: -10px;
-      left: 50%;
       width: 10px;
       height: 10px;
       background-color: #ff69b4;
       animation: fall 3s linear infinite;
-      z-index: 1000;
+      z-index: 999;
     }
 
     @keyframes fall {
-      0% {
-        transform: translateX(0) translateY(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(-200px) translateY(100vh);
-        opacity: 0;
-      }
-    }
-
-    .emoji-border {
-      font-size: 1.2em;
-      margin: 5px 0;
-    }
-
-    .card-message {
-      font-size: 1.1em;
-      margin-top: 15px;
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <div id="form">
-    <h1>What's your name?</h1>
-    <input type="text" id="nameInput" placeholder="Type your name" />
-    <button onclick="start()">Submit</button>
-  </div>
-
   <div id="birthdayCard">
-    <div class="card-inner" id="cardInner">
-      <div class="card-front">
-        <h1>🎉 HAPPY BIRTHDAY 🎉</h1>
-        <small>Click to open</small>
+    <div class="book" id="book">
+      <div class="cover" id="cover">
+        <div>
+          <h1>🎉 HAPPY BIRTHDAY 🎉</h1>
+          <small>Click to Open</small>
+        </div>
       </div>
-      <div class="card-back">
-        <div class="emoji-border">🎂🎈🎉🎁🎊</div>
-        <h2 id="cardMessage"></h2>
-        <div class="card-message">Wishing you a day filled with joy, laughter, and cake!</div>
-        <div class="emoji-border">🎊🎁🎉🎈🎂</div>
+      <div class="page left-page">
+        <div class="emoji-deco">🎂🎉🎁🎈</div>
+        <div class="decor">Sending love & cake 🍰<br />from all of us!</div>
+      </div>
+      <div class="page right-page">
+        <div class="emoji-deco">🎊🎈🎉</div>
+        <div class="card-message" id="messageText"></div>
       </div>
     </div>
   </div>
 
   <script>
-    function start() {
-      const name = document.getElementById('nameInput').value.trim();
-      if (!name) return;
-      document.getElementById('form').style.display = 'none';
-      document.getElementById('birthdayCard').style.display = 'block';
-      document.getElementById('cardMessage').textContent = `Happy Birthday ${name.toUpperCase()}!`;
+    function getNameFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('name')?.trim() || 'Friend';
     }
 
-    document.getElementById('cardInner').onclick = () => {
-      const inner = document.getElementById('cardInner');
-      if (!inner.classList.contains('open')) {
-        inner.classList.add('open');
-        playSong();
-        launchConfetti();
-      }
-    };
+    function openBook() {
+      document.getElementById('book').classList.add('open');
+      document.getElementById('cover').style.display = 'none';
+    }
 
-    function playSong() {
+    function launchConfetti() {
+      for (let i = 0; i < 60; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.backgroundColor = ['#ff69b4', '#ffd700', '#40e0d0'][i % 3];
+        c.style.animationDuration = (2 + Math.random() * 3) + 's';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 5000);
+      }
+    }
+
+    function playTune() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const notes = [261.63,261.63,293.66,261.63,349.23,329.63,261.63,261.63,293.66,261.63,392.00,349.23];
@@ -210,22 +206,21 @@
           o.stop(time + durations[i]);
           time += durations[i];
         });
-      } catch (err) {
-        console.log('Sound error', err);
+      } catch (e) {
+        console.warn('Audio context failed');
       }
     }
 
-    function launchConfetti() {
-      for (let i = 0; i < 50; i++) {
-        const c = document.createElement('div');
-        c.className = 'confetti';
-        c.style.left = Math.random() * 100 + '%';
-        c.style.backgroundColor = ['#ff69b4', '#ffd700', '#ff6347'][i % 3];
-        c.style.animationDuration = (2 + Math.random() * 3) + 's';
-        document.body.appendChild(c);
-        setTimeout(() => c.remove(), 5000);
-      }
-    }
+    // Setup
+    window.onload = () => {
+      const name = getNameFromURL();
+      document.getElementById('messageText').textContent = `🎈 HAPPY BIRTHDAY ${name.toUpperCase()}! 🎈\nHope your day is magical.`;
+      document.getElementById('cover').addEventListener('click', () => {
+        openBook();
+        launchConfetti();
+        playTune();
+      });
+    };
   </script>
 </body>
 </html>
