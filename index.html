@@ -3,53 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Greeting</title>
+  <title>Birthday Card</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
       padding: 0;
       font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle, #fff0f5, #ffe4e1);
       height: 100vh;
-      width: 100vw;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      overflow: hidden;
     }
 
     #form {
-      z-index: 10;
       text-align: center;
       background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
       padding: 2vw;
       border-radius: 15px;
       border: 2px solid rgba(255, 255, 255, 0.3);
       width: 90%;
       max-width: 400px;
-      box-sizing: border-box;
-    }
-
-    #form h1 {
-      color: #e0e0ff;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      z-index: 10;
     }
 
     input, button {
       padding: 12px;
-      font-size: 1.1em;
       margin-top: 1em;
+      font-size: 1.1em;
+      width: 100%;
       border-radius: 8px;
       border: none;
-      width: 100%;
       box-sizing: border-box;
     }
 
     input {
       background: rgba(0, 0, 0, 0.3);
-      color: #fff;
+      color: white;
       border: 2px solid rgba(255, 255, 255, 0.3);
     }
 
@@ -58,300 +50,182 @@
     }
 
     button {
-      background: linear-gradient(45deg, #1a1a2e, #483d8b);
+      background: linear-gradient(45deg, #ff69b4, #ff1493);
       color: white;
       font-weight: bold;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      transition: all 0.3s ease;
       cursor: pointer;
     }
 
     button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(45deg, #ff1493, #ff69b4);
     }
 
-    #helloContainer {
-      position: absolute;
-      font-size: 3em;
-      text-align: center;
-      color: white;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 1s;
-    }
-
-    .letter {
-      transform: scale(0);
-      opacity: 0;
-      transition: transform 0.5s ease, opacity 0.5s ease;
-    }
-
-    #starfield {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-    }
-
-    .star {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      width: 2px;
-      height: 2px;
-      animation: twinkle 2s infinite;
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
-    }
-
-    /* BIRTHDAY CARD */
     #birthdayCard {
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      background: radial-gradient(circle, #fff0f5, #ffe4e1);
       display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-    }
-
-    .card-outer {
-      perspective: 2000px;
+      position: absolute;
       width: 300px;
       height: 400px;
+      perspective: 1500px;
     }
 
     .card-inner {
       width: 100%;
       height: 100%;
-      transform-style: preserve-3d;
       transition: transform 1s;
-      position: relative;
+      transform-style: preserve-3d;
       cursor: pointer;
+      position: relative;
     }
 
-    .card-front, .card-inside {
-      backface-visibility: hidden;
+    .card-front, .card-back {
       position: absolute;
       width: 100%;
       height: 100%;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border-radius: 12px;
+      backface-visibility: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       padding: 20px;
-      text-align: center;
       box-sizing: border-box;
+      text-align: center;
     }
 
     .card-front {
       background: linear-gradient(45deg, #ff69b4, #ffb6c1);
       color: white;
-      font-weight: bold;
     }
 
-    .card-inside {
+    .card-front h1 {
+      font-size: 1.8em;
+    }
+
+    .card-front small {
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+
+    .card-back {
       background: white;
       transform: rotateY(180deg);
-      flex-direction: column;
-      color: #222;
+      color: #ff1493;
     }
 
     .card-inner.open {
       transform: rotateY(180deg);
     }
 
-    .card-message {
+    .confetti {
+      position: fixed;
+      top: -10px;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      background-color: #ff69b4;
+      animation: fall 3s linear infinite;
+      z-index: 1000;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateX(0) translateY(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-200px) translateY(100vh);
+        opacity: 0;
+      }
+    }
+
+    .emoji-border {
       font-size: 1.2em;
-      font-weight: bold;
-      color: #ff1493;
+      margin: 5px 0;
     }
 
-    .letter.birthday {
-      color: #ff1493;
-      text-shadow:
-        0 0 10px #ff69b4,
-        0 0 20px #ff1493,
-        0 0 30px #ffd700,
-        0 0 40px #ff6347,
-        0 0 50px #40e0d0;
-      animation: rainbowGlow 2s ease-in-out infinite;
-    }
-
-    @keyframes rainbowGlow {
-      0% { text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493, 0 0 30px #ffd700; }
-      25% { text-shadow: 0 0 10px #ffd700, 0 0 20px #ff6347, 0 0 30px #40e0d0; }
-      50% { text-shadow: 0 0 10px #40e0d0, 0 0 20px #9370db, 0 0 30px #ff69b4; }
-      75% { text-shadow: 0 0 10px #9370db, 0 0 20px #ff1493, 0 0 30px #ffd700; }
-      100% { text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493, 0 0 30px #ffd700; }
+    .card-message {
+      font-size: 1.1em;
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
-  <div id="starfield"></div>
-
   <div id="form">
     <h1>What's your name?</h1>
     <input type="text" id="nameInput" placeholder="Type your name" />
     <button onclick="start()">Submit</button>
   </div>
 
-  <div id="helloContainer"></div>
-
   <div id="birthdayCard">
-    <div class="card-outer">
-      <div class="card-inner" id="cardInner">
-        <div class="card-front">🎉 Tap to open</div>
-        <div class="card-inside">
-          <div class="card-message" id="cardMessage"></div>
-        </div>
+    <div class="card-inner" id="cardInner">
+      <div class="card-front">
+        <h1>🎉 HAPPY BIRTHDAY 🎉</h1>
+        <small>Click to open</small>
+      </div>
+      <div class="card-back">
+        <div class="emoji-border">🎂🎈🎉🎁🎊</div>
+        <h2 id="cardMessage"></h2>
+        <div class="card-message">Wishing you a day filled with joy, laughter, and cake!</div>
+        <div class="emoji-border">🎊🎁🎉🎈🎂</div>
       </div>
     </div>
   </div>
 
   <script>
-    function getParams() {
-      const params = {};
-      window.location.search.replace('?', '').split('&').forEach(p => {
-        const [key, val] = p.split('=');
-        if (key) params[key] = decodeURIComponent(val || '');
-      });
-      return params;
-    }
-
     function start() {
       const name = document.getElementById('nameInput').value.trim();
       if (!name) return;
-      const params = getParams();
-      if (params.bday === 'true') {
-        showBirthdayCard(name);
-      } else {
-        showHello(name);
-      }
-    }
-
-    function showHello(name) {
       document.getElementById('form').style.display = 'none';
-      const container = document.getElementById('helloContainer');
-      container.innerHTML = '';
-      container.style.opacity = 1;
-
-      createStarfield();
-
-      const text = `HELLO ${name.toUpperCase()}`;
-      text.split('').forEach((char, i) => {
-        const span = document.createElement('span');
-        span.className = 'letter';
-        span.textContent = char === ' ' ? '\u00A0' : char;
-        container.appendChild(span);
-        setTimeout(() => {
-          span.style.transform = 'scale(1)';
-          span.style.opacity = 1;
-        }, i * 100);
-      });
+      document.getElementById('birthdayCard').style.display = 'block';
+      document.getElementById('cardMessage').textContent = `Happy Birthday ${name.toUpperCase()}!`;
     }
 
-    function createStarfield() {
-      const container = document.getElementById('starfield');
-      container.innerHTML = '';
-      const count = Math.floor(window.innerWidth / 5);
-      for (let i = 0; i < count; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.left = `${Math.random() * 100}vw`;
-        star.style.top = `${Math.random() * 100}vh`;
-        star.style.width = star.style.height = `${Math.random() * 2 + 1}px`;
-        container.appendChild(star);
-      }
-    }
-
-    function showBirthdayCard(name) {
-      document.getElementById('form').style.display = 'none';
-      const card = document.getElementById('birthdayCard');
+    document.getElementById('cardInner').onclick = () => {
       const inner = document.getElementById('cardInner');
-      const msg = document.getElementById('cardMessage');
-      const container = document.getElementById('helloContainer');
-
-      msg.textContent = `🎈 HAPPY BIRTHDAY ${name.toUpperCase()}! 🎈`;
-      card.style.display = 'flex';
-
-      inner.onclick = () => {
+      if (!inner.classList.contains('open')) {
         inner.classList.add('open');
-        setTimeout(() => {
-          container.style.opacity = 1;
-          container.innerHTML = '';
-          const text = `HAPPY BIRTHDAY ${name.toUpperCase()}!`;
-          text.split('').forEach((char, i) => {
-            const span = document.createElement('span');
-            span.className = 'letter birthday';
-            span.textContent = char === ' ' ? '\u00A0' : char;
-            container.appendChild(span);
-            setTimeout(() => {
-              span.style.transform = 'scale(1)';
-              span.style.opacity = 1;
-            }, i * 100);
-          });
-          playBirthdaySong();
-        }, 1000);
-      };
-    }
-
-    function playBirthdaySong() {
-      let audioCtx;
-      try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = [
-          261.63, 261.63, 293.66, 261.63, 349.23, 329.63,
-          261.63, 261.63, 293.66, 261.63, 392.00, 349.23,
-          261.63, 261.63, 523.25, 440.00, 349.23, 329.63, 293.66,
-          466.16, 466.16, 440.00, 349.23, 392.00, 349.23
-        ];
-        const durations = [
-          0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
-          0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
-          0.5, 0.25, 0.75, 0.75, 0.75, 0.75, 1.5,
-          0.5, 0.25, 0.75, 0.75, 0.75, 1.5
-        ];
-        let currentTime = audioCtx.currentTime;
-        notes.forEach((freq, i) => {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.frequency.value = freq;
-          osc.type = 'triangle';
-          gain.gain.setValueAtTime(0.2, currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, currentTime + durations[i]);
-          osc.start(currentTime);
-          osc.stop(currentTime + durations[i]);
-          currentTime += durations[i];
-        });
-      } catch (e) {
-        alert('Could not play sound. Tap the card again to retry.');
-      }
-    }
-
-    window.onload = () => {
-      const p = getParams();
-      if (p.name) {
-        if (p.bday === 'true') {
-          showBirthdayCard(p.name);
-        } else {
-          showHello(p.name);
-        }
+        playSong();
+        launchConfetti();
       }
     };
+
+    function playSong() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [261.63,261.63,293.66,261.63,349.23,329.63,261.63,261.63,293.66,261.63,392.00,349.23];
+        const durations = [0.5,0.25,0.75,0.75,0.75,1.5,0.5,0.25,0.75,0.75,0.75,1.5];
+        let time = ctx.currentTime;
+
+        notes.forEach((note, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.type = 'triangle';
+          o.frequency.value = note;
+          g.gain.setValueAtTime(0.2, time);
+          g.gain.exponentialRampToValueAtTime(0.01, time + durations[i]);
+          o.start(time);
+          o.stop(time + durations[i]);
+          time += durations[i];
+        });
+      } catch (err) {
+        console.log('Sound error', err);
+      }
+    }
+
+    function launchConfetti() {
+      for (let i = 0; i < 50; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.backgroundColor = ['#ff69b4', '#ffd700', '#ff6347'][i % 3];
+        c.style.animationDuration = (2 + Math.random() * 3) + 's';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 5000);
+      }
+    }
   </script>
 </body>
 </html>
