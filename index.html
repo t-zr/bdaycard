@@ -42,11 +42,10 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #ff69b4, #ffb6c1, #ff1493, #ffd700);
+  background: linear-gradient(135deg, #ff69b4 0%, #ff1493 25%, #ffd700 50%, #ff6347 75%, #ff69b4 100%);
   background-size: 400% 400%;
-  animation: gradient-shift 6s ease infinite;
+  animation: gradient-shift 8s ease infinite;
   color: white;
-  font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,17 +53,24 @@
   transform-origin: left center;
   z-index: 10;
   border-radius: 12px;
-  text-align: center;
-  padding: 20px;
+  padding: 30px 20px;
   box-shadow: 
     0 20px 40px rgba(0,0,0,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.3),
+    inset 0 2px 0 rgba(255,255,255,0.3),
     0 0 30px rgba(255, 105, 180, 0.4);
   cursor: pointer;
-  transition: transform 2s ease-in-out;
-  border: 2px solid rgba(255,255,255,0.2);
+  transition: transform 2s ease-in-out, box-shadow 0.3s ease;
+  border: 3px solid rgba(255,255,255,0.3);
   position: relative;
   overflow: hidden;
+}
+
+.cover:hover {
+  box-shadow: 
+    0 25px 50px rgba(0,0,0,0.4),
+    inset 0 2px 0 rgba(255,255,255,0.3),
+    0 0 40px rgba(255, 105, 180, 0.6);
+  transform: translateY(-2px);
 }
 
 .cover::before {
@@ -74,19 +80,103 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  animation: cover-shine 3s linear infinite;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  animation: cover-shine 4s linear infinite;
   pointer-events: none;
 }
 
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+.cover-content {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
 }
 
-@keyframes cover-shine {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+.cover-decoration {
+  font-size: clamp(3em, 8vw, 4.5em);
+  margin-bottom: 0.3em;
+  animation: cake-bounce 3s ease-in-out infinite;
+  filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.4));
+}
+
+@keyframes cake-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  25% { transform: translateY(-8px) rotate(-2deg) scale(1.05); }
+  50% { transform: translateY(-12px) rotate(0deg) scale(1.1); }
+  75% { transform: translateY(-6px) rotate(2deg) scale(1.05); }
+}
+
+.cover-title {
+  font-size: clamp(1.8em, 5vw, 2.8em);
+  font-weight: 900;
+  margin: 0.2em 0;
+  text-shadow: 
+    3px 3px 6px rgba(0,0,0,0.4),
+    0 0 25px rgba(255, 255, 255, 0.6);
+  animation: title-glow 3s ease-in-out infinite;
+  letter-spacing: 1px;
+}
+
+@keyframes title-glow {
+  0%, 100% { 
+    text-shadow: 
+      3px 3px 6px rgba(0,0,0,0.4),
+      0 0 25px rgba(255, 255, 255, 0.6);
+  }
+  50% { 
+    text-shadow: 
+      3px 3px 6px rgba(0,0,0,0.4),
+      0 0 35px rgba(255, 255, 255, 0.9),
+      0 0 45px rgba(255, 215, 0, 0.4);
+  }
+}
+
+.cover-subtitle {
+  font-size: clamp(0.9em, 2.5vw, 1.2em);
+  margin: 0.5em 0;
+  opacity: 0.95;
+  font-weight: 400;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  font-style: italic;
+  animation: subtitle-fade 4s ease-in-out infinite;
+}
+
+@keyframes subtitle-fade {
+  0%, 100% { opacity: 0.95; }
+  50% { opacity: 0.7; }
+}
+
+.cover-balloons {
+  font-size: clamp(1.5em, 4vw, 2.2em);
+  margin: 0.5em 0;
+  animation: balloons-float 4s ease-in-out infinite;
+  filter: drop-shadow(0 3px 8px rgba(255, 20, 147, 0.3));
+}
+
+@keyframes balloons-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-5px) rotate(-1deg); }
+  66% { transform: translateY(-8px) rotate(1deg); }
+}
+
+.cover-hint {
+  font-size: clamp(0.75em, 2vw, 0.9em);
+  margin-top: 1em;
+  opacity: 0.8;
+  animation: hint-pulse 2s ease-in-out infinite;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  font-weight: 300;
+}
+
+@keyframes hint-pulse {
+  0%, 100% { 
+    opacity: 0.8; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.5; 
+    transform: scale(0.98);
+  }
 }
 
 .cover:hover {
@@ -106,39 +196,14 @@
   z-index: 2;
 }
 
-@keyframes title-pulse {
-  0%, 100% { 
-    transform: scale(1);
-    text-shadow: 
-      2px 2px 4px rgba(0,0,0,0.3),
-      0 0 20px rgba(255, 255, 255, 0.5);
-  }
-  50% { 
-    transform: scale(1.05);
-    text-shadow: 
-      2px 2px 4px rgba(0,0,0,0.3),
-      0 0 30px rgba(255, 255, 255, 0.8),
-      0 0 40px rgba(255, 215, 0, 0.3);
-  }
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
-.cover small {
-  font-size: clamp(0.7em, 2.5vw, 0.9em);
-  opacity: 0.9;
-  animation: pulse-glow 2s infinite;
-  position: relative;
-  z-index: 2;
-}
-
-@keyframes pulse-glow {
-  0%, 100% { 
-    opacity: 0.9; 
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  }
-  50% { 
-    opacity: 0.6; 
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-  }
+@keyframes cover-shine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
 .page {
@@ -344,9 +409,12 @@
   <div id="birthdayCard">
     <div class="book" id="book">
       <div class="cover" id="cover">
-        <div>
-          <h1>🎉 HAPPY BIRTHDAY 🎉</h1>
-          <small>Click to Open Your Card</small>
+        <div class="cover-content">
+          <div class="cover-decoration">🎂</div>
+          <h1 class="cover-title">Happy Birthday!</h1>
+          <div class="cover-subtitle">Hope your special day is wonderful</div>
+          <div class="cover-balloons">🎈🎊🎈</div>
+          <div class="cover-hint">Click to open</div>
         </div>
       </div>
       <div class="page left-page">
