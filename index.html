@@ -18,10 +18,15 @@
       overflow: hidden;
     }
 
+    .card-message, .card-greeting {
+      font-size: clamp(1em, 4vw, 1.4em);
+    }
+
     #cardContainer {
       perspective: 2000px;
-      width: 320px;
-      height: 440px;
+      width: 90vw;
+      max-width: 360px;
+      aspect-ratio: 4 / 5.5;
       position: relative;
     }
 
