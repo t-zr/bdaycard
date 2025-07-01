@@ -170,31 +170,48 @@
       }
     }
 
-    function playTune() {
-      if (audioPlayed) return;
-      audioPlayed = true;
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = [261.63,261.63,293.66,261.63,349.23,329.63,261.63,261.63,293.66,261.63,392.00,349.23];
-        const durations = [0.5,0.25,0.75,0.75,0.75,1.5,0.5,0.25,0.75,0.75,0.75,1.5];
-        let time = ctx.currentTime;
-        notes.forEach((note, i) => {
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.connect(g);
-          g.connect(ctx.destination);
-          o.type = 'triangle';
-          o.frequency.value = note;
-          g.gain.setValueAtTime(0.2, time);
-          g.gain.exponentialRampToValueAtTime(0.01, time + durations[i]);
-          o.start(time);
-          o.stop(time + durations[i]);
-          time += durations[i];
-        });
-      } catch (e) {
-        console.warn('Could not play tune:', e);
-      }
-    }
+    let audioContext; // Global reference
+let audioPlaying = false; // Prevent double plays
+
+function playBirthdayTune() {
+  if (audioPlaying) return;
+  audioPlaying = true;
+
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+
+  const notes = [261.63, 261.63, 293.66, 261.63, 349.23, 329.63, 261.63, 261.63, 293.66, 261.63, 392.00, 349.23];
+  const durations = [0.5, 0.25, 0.75, 0.75, 0.75, 1.5, 0.5, 0.25, 0.75, 0.75, 0.75, 1.5];
+
+  let time = audioContext.currentTime;
+
+  notes.forEach((note, i) => {
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+    oscillator.frequency.value = note;
+    oscillator.type = 'triangle';
+
+    gain.gain.setValueAtTime(0.2, time);
+    gain.gain.exponentialRampToValueAtTime(0.01, time + durations[i]);
+
+    oscillator.start(time);
+    oscillator.stop(time + durations[i]);
+
+    time += durations[i];
+  });
+
+  // Reset flag when done
+  setTimeout(() => {
+    audioPlaying = false;
+  }, durations.reduce((a, b) => a + b) * 1000);
+}
 
     window.onload = () => {
       const name = getNameFromURL();
