@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -9,138 +10,334 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 100vh;
+      min-height: 100vh;
       font-family: 'Orbitron', sans-serif;
       background: radial-gradient(circle, #fff0f5, #ffe4e1);
-      overflow: hidden;
+      overflow-x: hidden;
       display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #birthdayCard {
-      position: relative;
-      width: 600px;
-      height: 400px;
-      perspective: 2000px;
-    }
-
-    .book {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 1.5s ease;
-    }
-
-    .cover {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #ff69b4, #ffb6c1);
-      color: white;
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      backface-visibility: hidden;
-      transform-origin: left;
-      z-index: 3;
-      border-radius: 8px;
-      text-align: center;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      cursor: pointer;
-    }
-
-    .cover h1 {
-      font-size: 2em;
-      margin-bottom: 10px;
-    }
-
-    .cover small {
-      font-size: 0.9em;
-      opacity: 0.8;
-    }
-
-    .page {
-      position: absolute;
-      width: 50%;
-      height: 100%;
-      top: 0;
-      background: white;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       padding: 20px;
       box-sizing: border-box;
-      backface-visibility: hidden;
-      border-radius: 8px;
     }
 
-    .left-page {
-      left: 0;
-      transform-origin: left;
-      background: #fff8fb;
-      z-index: 1;
-    }
+```
+#birthdayCard {
+  position: relative;
+  width: min(600px, 90vw);
+  height: min(400px, 60vh);
+  perspective: 1500px;
+  max-width: 100%;
+}
 
-    .right-page {
-      right: 0;
-      transform: rotateY(180deg);
-      transform-origin: right;
-      background: #fff;
-      z-index: 1;
-    }
+.book {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 2s ease-in-out;
+}
 
-    .book.open {
-      transform: rotateY(180deg);
-    }
+.cover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #ff69b4, #ffb6c1, #ff1493, #ffd700);
+  background-size: 400% 400%;
+  animation: gradient-shift 6s ease infinite;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backface-visibility: hidden;
+  transform-origin: left center;
+  z-index: 10;
+  border-radius: 12px;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    0 0 30px rgba(255, 105, 180, 0.4);
+  cursor: pointer;
+  transition: transform 2s ease-in-out;
+  border: 2px solid rgba(255,255,255,0.2);
+  position: relative;
+  overflow: hidden;
+}
 
-    .emoji-deco {
-      font-size: 2em;
-      margin-bottom: 1em;
-    }
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: cover-shine 3s linear infinite;
+  pointer-events: none;
+}
 
-    .card-message {
-      font-size: 1.3em;
-      font-weight: bold;
-      color: #ff1493;
-      text-align: center;
-      text-shadow:
-        0 0 5px #ff69b4,
-        0 0 10px #ff1493,
-        0 0 20px #ff69b4;
-    }
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
 
-    .decor {
-      font-size: 1.5em;
-      text-align: center;
-      color: #ff69b4;
-      animation: float 3s ease-in-out infinite;
-    }
+@keyframes cover-shine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+.cover:hover {
+  box-shadow: 
+    0 25px 50px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+}
 
-    .confetti {
-      position: fixed;
-      top: -10px;
-      width: 10px;
-      height: 10px;
-      background-color: #ff69b4;
-      animation: fall 3s linear infinite;
-      z-index: 999;
-    }
+.cover h1 {
+  font-size: clamp(1.2em, 4vw, 2.2em);
+  margin-bottom: 10px;
+  text-shadow: 
+    2px 2px 4px rgba(0,0,0,0.3),
+    0 0 20px rgba(255, 255, 255, 0.5);
+  animation: title-pulse 2s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
 
-    @keyframes fall {
-      0% { transform: translateY(0); opacity: 1; }
-      100% { transform: translateY(100vh); opacity: 0; }
-    }
+@keyframes title-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    text-shadow: 
+      2px 2px 4px rgba(0,0,0,0.3),
+      0 0 20px rgba(255, 255, 255, 0.5);
+  }
+  50% { 
+    transform: scale(1.05);
+    text-shadow: 
+      2px 2px 4px rgba(0,0,0,0.3),
+      0 0 30px rgba(255, 255, 255, 0.8),
+      0 0 40px rgba(255, 215, 0, 0.3);
+  }
+}
+
+.cover small {
+  font-size: clamp(0.7em, 2.5vw, 0.9em);
+  opacity: 0.9;
+  animation: pulse-glow 2s infinite;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    opacity: 0.9; 
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+  50% { 
+    opacity: 0.6; 
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+  }
+}
+
+.page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: white;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  transform-origin: left center;
+  z-index: 5;
+  position: relative;
+  overflow: hidden;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255, 105, 180, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(64, 224, 208, 0.1) 0%, transparent 50%);
+  animation: page-sparkle 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes page-sparkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.left-page {
+  background: linear-gradient(135deg, #fff8fb, #fff);
+  transform: translateZ(-2px);
+}
+
+.right-page {
+  background: linear-gradient(135deg, #fff, #fef7ff);
+  opacity: 0;
+  transition: opacity 1s ease-in-out 1s;
+}
+
+.book.open .cover {
+  transform: rotateY(-180deg);
+}
+
+.book.open .right-page {
+  opacity: 1;
+}
+
+.emoji-deco {
+  font-size: clamp(1.5em, 5vw, 2.8em);
+  margin-bottom: 1em;
+  animation: party-bounce 2s infinite, emoji-spin 4s linear infinite;
+  filter: drop-shadow(0 5px 15px rgba(255, 105, 180, 0.4));
+}
+
+@keyframes party-bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(0deg); }
+  10% { transform: translateY(-8px) rotate(-5deg); }
+  30% { transform: translateY(-12px) rotate(3deg); }
+  40% { transform: translateY(-15px) rotate(-2deg); }
+  60% { transform: translateY(-8px) rotate(2deg); }
+  70% { transform: translateY(-5px) rotate(-1deg); }
+}
+
+@keyframes emoji-spin {
+  0% { filter: drop-shadow(0 5px 15px rgba(255, 105, 180, 0.4)) hue-rotate(0deg); }
+  25% { filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.4)) hue-rotate(90deg); }
+  50% { filter: drop-shadow(0 5px 15px rgba(64, 224, 208, 0.4)) hue-rotate(180deg); }
+  75% { filter: drop-shadow(0 5px 15px rgba(255, 99, 71, 0.4)) hue-rotate(270deg); }
+  100% { filter: drop-shadow(0 5px 15px rgba(255, 105, 180, 0.4)) hue-rotate(360deg); }
+}
+
+.card-message {
+  font-size: clamp(1em, 3vw, 1.4em);
+  font-weight: 900;
+  background: linear-gradient(45deg, #ff1493, #ff69b4, #ffd700, #ff6347, #ff1493);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  line-height: 1.5;
+  white-space: pre-line;
+  animation: rainbow-text 3s ease-in-out infinite, text-glow 2s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.5));
+}
+
+@keyframes rainbow-text {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes text-glow {
+  0% { filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.5)); }
+  100% { filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.8)) drop-shadow(0 0 30px rgba(255, 215, 0, 0.4)); }
+}
+
+.decor {
+  font-size: clamp(1em, 3vw, 1.5em);
+  text-align: center;
+  background: linear-gradient(135deg, #ff69b4, #ff1493, #ffd700);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: float 3s ease-in-out infinite, shimmer 4s ease-in-out infinite;
+  line-height: 1.4;
+  text-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; transform: translateY(0) scale(1); }
+  25% { opacity: 0.8; transform: translateY(-5px) scale(1.02); }
+  50% { opacity: 1; transform: translateY(-15px) scale(1.05); }
+  75% { opacity: 0.9; transform: translateY(-8px) scale(1.03); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-15px) scale(1.05); }
+}
+
+.confetti {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  z-index: 1000;
+  pointer-events: none;
+  border-radius: 2px;
+}
+
+.confetti-piece {
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% { 
+    transform: translateY(-100vh) rotate(0deg); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translateY(100vh) rotate(720deg); 
+    opacity: 0; 
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  #birthdayCard {
+    height: min(350px, 50vh);
+  }
+  
+  .page {
+    padding: 15px;
+  }
+  
+  .cover {
+    padding: 15px;
+  }
+}
+
+@media (max-height: 500px) {
+  #birthdayCard {
+    height: 80vh;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .book, .cover, .emoji-deco, .decor, .confetti-piece {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .cover small {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+```
+
   </style>
 </head>
 <body>
@@ -149,15 +346,15 @@
       <div class="cover" id="cover">
         <div>
           <h1>🎉 HAPPY BIRTHDAY 🎉</h1>
-          <small>Click to Open</small>
+          <small>Click to Open Your Card</small>
         </div>
       </div>
       <div class="page left-page">
         <div class="emoji-deco">🎂🎉🎁🎈</div>
-        <div class="decor">Sending love & cake 🍰<br />from all of us!</div>
+        <div class="decor">Sending love & cake 🍰<br />from all of us!<br />Hope your special day<br />is absolutely wonderful! ✨</div>
       </div>
       <div class="page right-page">
-        <div class="emoji-deco">🎊🎈🎉</div>
+        <div class="emoji-deco">🎊🌟🎈🎉</div>
         <div class="card-message" id="messageText"></div>
       </div>
     </div>
@@ -170,57 +367,131 @@
     }
 
     function openBook() {
-      document.getElementById('book').classList.add('open');
-      document.getElementById('cover').style.display = 'none';
+      const book = document.getElementById('book');
+      book.classList.add('open');
     }
 
     function launchConfetti() {
-      for (let i = 0; i < 60; i++) {
-        const c = document.createElement('div');
-        c.className = 'confetti';
-        c.style.left = Math.random() * 100 + '%';
-        c.style.backgroundColor = ['#ff69b4', '#ffd700', '#40e0d0'][i % 3];
-        c.style.animationDuration = (2 + Math.random() * 3) + 's';
-        document.body.appendChild(c);
-        setTimeout(() => c.remove(), 5000);
+      const colors = ['#ff69b4', '#ffd700', '#40e0d0', '#ff1493', '#00ff7f', '#ff6347'];
+      const confettiCount = window.innerWidth < 768 ? 40 : 80;
+      
+      for (let i = 0; i < confettiCount; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti confetti-piece';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.animationDuration = (2 + Math.random() * 3) + 's';
+          confetti.style.animationDelay = Math.random() * 0.5 + 's';
+          
+          // Random shapes
+          if (Math.random() > 0.5) {
+            confetti.style.borderRadius = '50%';
+          }
+          
+          document.body.appendChild(confetti);
+          
+          setTimeout(() => {
+            if (confetti.parentNode) {
+              confetti.remove();
+            }
+          }, 6000);
+        }, i * 50);
       }
     }
 
     function playTune() {
+      // Check if user has reduced motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+      }
+      
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = [261.63,261.63,293.66,261.63,349.23,329.63,261.63,261.63,293.66,261.63,392.00,349.23];
-        const durations = [0.5,0.25,0.75,0.75,0.75,1.5,0.5,0.25,0.75,0.75,0.75,1.5];
-        let time = ctx.currentTime;
+        
+        // Happy Birthday melody
+        const notes = [
+          261.63, 261.63, 293.66, 261.63, 349.23, 329.63,
+          261.63, 261.63, 293.66, 261.63, 392.00, 349.23,
+          261.63, 261.63, 523.25, 440.00, 349.23, 329.63, 293.66,
+          466.16, 466.16, 440.00, 349.23, 392.00, 349.23
+        ];
+        
+        const durations = [
+          0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
+          0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
+          0.5, 0.25, 0.75, 0.75, 0.75, 0.75, 1.5,
+          0.5, 0.25, 0.75, 0.75, 0.75, 1.5
+        ];
+        
+        let time = ctx.currentTime + 0.1;
 
         notes.forEach((note, i) => {
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.connect(g);
-          g.connect(ctx.destination);
-          o.type = 'triangle';
-          o.frequency.value = note;
-          g.gain.setValueAtTime(0.2, time);
-          g.gain.exponentialRampToValueAtTime(0.01, time + durations[i]);
-          o.start(time);
-          o.stop(time + durations[i]);
-          time += durations[i];
+          const oscillator = ctx.createOscillator();
+          const gainNode = ctx.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(ctx.destination);
+          
+          oscillator.type = 'triangle';
+          oscillator.frequency.value = note;
+          
+          gainNode.gain.setValueAtTime(0, time);
+          gainNode.gain.linearRampToValueAtTime(0.15, time + 0.01);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, time + durations[i]);
+          
+          oscillator.start(time);
+          oscillator.stop(time + durations[i]);
+          
+          time += durations[i] * 0.9; // Slight overlap
         });
       } catch (e) {
-        console.warn('Audio context failed');
+        console.warn('Audio playback not supported');
       }
     }
 
     // Setup
-    window.onload = () => {
+    window.addEventListener('load', () => {
       const name = getNameFromURL();
-      document.getElementById('messageText').textContent = `🎈 HAPPY BIRTHDAY ${name.toUpperCase()}! 🎈\nHope your day is magical.`;
-      document.getElementById('cover').addEventListener('click', () => {
-        openBook();
-        launchConfetti();
-        playTune();
+      const messageElement = document.getElementById('messageText');
+      messageElement.textContent = `🎈 HAPPY BIRTHDAY\n${name.toUpperCase()}! 🎈\n\nHope your day is magical\nand filled with joy! ✨\n\nMake a wish! 🌟`;
+      
+      const cover = document.getElementById('cover');
+      let hasOpened = false;
+      
+      const handleClick = () => {
+        if (!hasOpened) {
+          hasOpened = true;
+          openBook();
+          launchConfetti();
+          setTimeout(playTune, 500); // Delay audio to sync with animation
+        }
+      };
+      
+      cover.addEventListener('click', handleClick);
+      cover.addEventListener('touchstart', handleClick, { passive: true });
+      
+      // Keyboard accessibility
+      cover.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick();
+        }
       });
-    };
+      
+      // Make cover focusable
+      cover.setAttribute('tabindex', '0');
+      cover.setAttribute('role', 'button');
+      cover.setAttribute('aria-label', 'Open birthday card');
+    });
+
+    // Handle orientation changes
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
+    });
   </script>
+
 </body>
 </html>
