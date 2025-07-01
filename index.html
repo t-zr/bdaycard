@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Birthday Card</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100vh;
-      font-family: 'Quicksand', sans-serif;
+      font-family: 'Orbitron', sans-serif;
       background: radial-gradient(circle, #fff0f5, #ffe4e1);
       display: flex;
       justify-content: center;
@@ -68,57 +68,33 @@
     }
 
     .card-back {
+      background: white;
       transform: rotateY(180deg);
-      animation: gradientShift 8s ease infinite;
-      background: linear-gradient(45deg, #ff6ec4, #7873f5, #4ADEDE, #fcb045);
-      background-size: 300% 300%;
-      color: #fff;
-    }
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
     }
 
     .card-message {
-      font-size: 1.3em;
+      font-size: 1.4em;
       font-weight: bold;
-      text-shadow: 
-        0 0 5px #ffffffaa, 
-        0 0 10px #ffd700aa;
+      background: linear-gradient(90deg, #ff69b4, #ff1493, #ffd700, #40e0d0);
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 4s linear infinite;
+      text-align: center;
     }
 
     .card-greeting {
       margin-top: 1em;
       font-size: 1em;
-      line-height: 1.4em;
+      color: #555;
       max-width: 90%;
-      color: #fffbe6;
+      line-height: 1.4em;
+      text-shadow: 0 0 5px rgba(255, 105, 180, 0.2);
     }
 
-    /* Floating sparkles */
-    .sparkle {
-      position: fixed;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #ffd700 0%, #ff1493 100%);
-      animation: sparkleFall 5s linear infinite;
-      opacity: 0.8;
-      pointer-events: none;
-      z-index: 999;
-    }
-
-    @keyframes sparkleFall {
-      0% {
-        transform: translateY(-10px) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) scale(0.5);
-        opacity: 0;
-      }
+    @keyframes shimmer {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
     }
   </style>
 </head>
@@ -141,25 +117,10 @@
       return params.get('name')?.trim() || 'Friend';
     }
 
-    function addSparkles() {
-      for (let i = 0; i < 30; i++) {
-        const s = document.createElement('div');
-        s.className = 'sparkle';
-        s.style.left = Math.random() * 100 + 'vw';
-        s.style.animationDelay = (Math.random() * 5) + 's';
-        document.body.appendChild(s);
-        setTimeout(() => s.remove(), 6000);
-      }
-    }
-
     // Card flip
     document.getElementById('card').addEventListener('click', () => {
-      const card = document.getElementById('card');
-      if (!card.classList.contains('open')) {
-        card.classList.add('open');
-        addSparkles();
-        playTune();
-      }
+      document.getElementById('card').classList.add('open');
+      playTune();
     });
 
     function playTune() {
@@ -189,8 +150,8 @@
     // Initialize
     window.onload = () => {
       const name = getNameFromURL();
-      document.getElementById('msgLine1').textContent = `🎈 Happy Birthday, ${name}! 🎈`;
-      document.getElementById('msgLine2').textContent = `Wishing you a day filled with joy, laughter, and sweet surprises. 🎂💖`;
+      document.getElementById('msgLine1').textContent = `🎈 HAPPY BIRTHDAY, ${name.toUpperCase()}! 🎈`;
+      document.getElementById('msgLine2').textContent = `Hope your day is filled with cake, smiles, and magic. 🎂💫`;
     };
   </script>
 </body>
