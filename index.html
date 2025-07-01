@@ -22,6 +22,8 @@
       perspective: 2000px;
       width: 300px;
       height: 400px;
+      position: relative;
+      z-index: 10;
     }
 
     .card {
@@ -96,14 +98,33 @@
       0% { background-position: 0% 50%; }
       100% { background-position: 100% 50%; }
     }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: pink;
+      animation: fall linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-10px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
   <div id="cardContainer">
     <div class="card" id="card">
-      <div class="card-face card-front">
-        HAPPY BIRTHDAY
-      </div>
+      <div class="card-face card-front">HAPPY BIRTHDAY</div>
       <div class="card-face card-back">
         <div class="card-message" id="msgLine1"></div>
         <div class="card-greeting" id="msgLine2"></div>
@@ -117,13 +138,35 @@
       return params.get('name')?.trim() || 'Friend';
     }
 
-    // Card flip
+    let audioPlayed = false;
+    let cardOpened = false;
+
     document.getElementById('card').addEventListener('click', () => {
-      document.getElementById('card').classList.add('open');
-      playTune();
+      if (!cardOpened) {
+        document.getElementById('card').classList.add('open');
+        launchConfetti();
+        playTune();
+        cardOpened = true;
+      }
     });
 
+    function launchConfetti() {
+      for (let i = 0; i < 60; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + 'vw';
+        c.style.top = '-10px';
+        c.style.backgroundColor = ['#ff69b4', '#ffd700', '#40e0d0'][i % 3];
+        c.style.animationDuration = (2 + Math.random() * 3) + 's';
+        c.style.animationDelay = (Math.random() * 1) + 's';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 6000);
+      }
+    }
+
     function playTune() {
+      if (audioPlayed) return;
+      audioPlayed = true;
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const notes = [261.63,261.63,293.66,261.63,349.23,329.63,261.63,261.63,293.66,261.63,392.00,349.23];
@@ -151,7 +194,7 @@
     window.onload = () => {
       const name = getNameFromURL();
       document.getElementById('msgLine1').textContent = `🎈 HAPPY BIRTHDAY, ${name.toUpperCase()}! 🎈`;
-      document.getElementById('msgLine2').textContent = `Hope your day is filled with cake, smiles, and magic. 🎂💫`;
+      document.getElementById('msgLine2').textContent = `Hope your day is filled with cake, laughter, and sparkle. 🎂✨`;
     };
   </script>
 </body>
