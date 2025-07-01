@@ -251,6 +251,12 @@
 .left-page {
   background: linear-gradient(135deg, #fff8fb, #fff);
   transform: translateZ(-2px);
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out 1s;
+}
+
+.book.open .left-page {
+  opacity: 1;
 }
 
 .right-page {
@@ -263,7 +269,7 @@
   transform: rotateY(-180deg);
 }
 
-.book.open .right-page {
+.book.open .left-page {
   opacity: 1;
 }
 
@@ -418,12 +424,11 @@
         </div>
       </div>
       <div class="page left-page">
-        <div class="emoji-deco">🎂🎉🎁🎈</div>
-        <div class="decor">Sending love & cake 🍰<br />from all of us!<br />Hope your special day<br />is absolutely wonderful! ✨</div>
-      </div>
-      <div class="page right-page">
         <div class="emoji-deco">🎊🌟🎈🎉</div>
         <div class="card-message" id="messageText"></div>
+      </div>
+      <div class="page right-page" style="display: none;">
+        <!-- Hidden right page -->
       </div>
     </div>
   </div>
