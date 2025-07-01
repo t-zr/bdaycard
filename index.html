@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Birthday Card</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
@@ -29,7 +29,7 @@
       width: 100%;
       height: 100%;
       transform-style: preserve-3d;
-      transition: transform 1s ease;
+      transition: transform 1.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       position: relative;
     }
 
@@ -72,6 +72,7 @@
       font-size: 0.6em;
       color: #ff69b4;
       opacity: 0.75;
+      display: block;
       margin-top: 15px;
     }
 
@@ -125,6 +126,13 @@
         opacity: 0;
       }
     }
+
+    @media (max-width: 500px) {
+      #cardContainer {
+        width: 90vw;
+        height: auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -144,16 +152,10 @@
       return params.get('name')?.trim() || 'Friend';
     }
 
-    let audioPlayed = false;
-    let cardOpened = false;
-
     document.getElementById('card').addEventListener('click', () => {
-      if (!cardOpened) {
-        document.getElementById('card').classList.add('open');
-        launchConfetti();
-        playTune();
-        cardOpened = true;
-      }
+      document.getElementById('card').classList.add('open');
+      launchConfetti();
+      playTune();
     });
 
     function launchConfetti() {
@@ -170,48 +172,41 @@
       }
     }
 
-    let audioContext; // Global reference
-let audioPlaying = false; // Prevent double plays
+    function playTune() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [
+          261.63, 261.63, 293.66, 261.63, 349.23, 329.63,
+          261.63, 261.63, 293.66, 261.63, 392.00, 349.23,
+          261.63, 261.63, 523.25, 440.00, 349.23, 329.63, 293.66,
+          466.16, 466.16, 440.00, 349.23, 392.00, 349.23
+        ];
+        const durations = [
+          0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
+          0.5, 0.25, 0.75, 0.75, 0.75, 1.5,
+          0.5, 0.25, 0.75, 0.75, 0.75, 0.75, 1.5,
+          0.5, 0.25, 0.75, 0.75, 0.75, 1.5
+        ];
 
-function playBirthdayTune() {
-  if (audioPlaying) return;
-  audioPlaying = true;
+        let time = ctx.currentTime;
 
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  }
-
-  if (audioContext.state === 'suspended') {
-    audioContext.resume();
-  }
-
-  const notes = [261.63, 261.63, 293.66, 261.63, 349.23, 329.63, 261.63, 261.63, 293.66, 261.63, 392.00, 349.23];
-  const durations = [0.5, 0.25, 0.75, 0.75, 0.75, 1.5, 0.5, 0.25, 0.75, 0.75, 0.75, 1.5];
-
-  let time = audioContext.currentTime;
-
-  notes.forEach((note, i) => {
-    const oscillator = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
-    oscillator.frequency.value = note;
-    oscillator.type = 'triangle';
-
-    gain.gain.setValueAtTime(0.2, time);
-    gain.gain.exponentialRampToValueAtTime(0.01, time + durations[i]);
-
-    oscillator.start(time);
-    oscillator.stop(time + durations[i]);
-
-    time += durations[i];
-  });
-
-  // Reset flag when done
-  setTimeout(() => {
-    audioPlaying = false;
-  }, durations.reduce((a, b) => a + b) * 1000);
-}
+        notes.forEach((note, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.type = 'triangle';
+          o.frequency.value = note;
+          g.gain.setValueAtTime(0.2, time);
+          g.gain.exponentialRampToValueAtTime(0.01, time + durations[i]);
+          o.start(time);
+          o.stop(time + durations[i]);
+          time += durations[i];
+        });
+      } catch (e) {
+        console.warn('Audio playback failed:', e);
+      }
+    }
 
     window.onload = () => {
       const name = getNameFromURL();
