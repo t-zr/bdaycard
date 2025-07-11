@@ -89,6 +89,7 @@
     }
 
     .card.open {
+      transform: rotateY(180deg);
       animation: none;
     }
 
@@ -140,7 +141,6 @@
       text-shadow: 3px 3px 0 #ffd700, -1px -1px 0 #fff;
       animation: titleBounce 3s ease-in-out infinite;
       padding: 0 60px;
-      z-index: 3;
     }
 
     @keyframes titleBounce {
@@ -368,35 +368,6 @@
       90% { opacity: 1; }
       100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
-
-    /* Page-turn animation styles */
-    .card-face.page-1.active {
-      z-index: 3;
-      transform: rotateY(0deg);
-    }
-
-    .card-face.page-2.active {
-      z-index: 3;
-      transform: rotateY(180deg);
-    }
-
-    .card-face.page-3.active {
-      z-index: 3;
-      transform: rotateY(360deg);
-    }
-
-    .card-face:not(.active) {
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    .card-face.turning {
-      transition: transform 1.25s cubic-bezier(0.68, -0.55, 0.265, 1.55), z-index 0.625s step-end;
-    }
-
-    .card-face.turning-back {
-      transition: transform 1.25s cubic-bezier(0.68, -0.55, 0.265, 1.55), z-index 0.625s step-start;
-    }
   </style>
 </head>
 <body>
@@ -405,29 +376,20 @@
     <div class="balloon">🎈</div>
     <div class="balloon">🎈</div>
     <div class="balloon">🎈</div>
-    <div class="age-badge" id="ageBadge"></div>
   </div>
 
   <div id="cardContainer">
     <div class="card" id="card">
-      <div class="card-face card-front page-1 active" id="page1">
+      <div class="card-face card-front">
         <div class="party-hat">🎉</div>
         <div class="birthday-icons">🎂</div>
         <div class="gift-box">🎁</div>
         HAPPY BIRTHDAY
         <div class="cake-animation">🍰</div>
       </div>
-      <div class="card-face card-back page-2" id="page2">
+      <div class="card-face card-back">
         <div class="card-message" id="msgLine1"></div>
         <div class="card-greeting" id="msgLine2"></div>
-        <div class="music-note" style="top: 20%; left: 15%;">🎵</div>
-        <div class="music-note" style="top: 30%; right: 20%; animation-delay: 0.5s;">🎶</div>
-        <div class="music-note" style="bottom: 25%; left: 20%; animation-delay: 1s;">🎵</div>
-        <div class="music-note" style="bottom: 35%; right: 15%; animation-delay: 1.5s;">🎶</div>
-      </div>
-      <div class="card-face card-back page-3" id="page3">
-        <div class="card-message">A Year Full of Joy!</div>
-        <div class="card-greeting">May your birthday be the start of an amazing new chapter! 🎈✨</div>
         <div class="music-note" style="top: 20%; left: 15%;">🎵</div>
         <div class="music-note" style="top: 30%; right: 20%; animation-delay: 0.5s;">🎶</div>
         <div class="music-note" style="bottom: 25%; left: 20%; animation-delay: 1s;">🎵</div>
@@ -441,8 +403,6 @@
     let audioContext;
     let sparkleInterval;
     let fireworkInterval;
-    let currentPage = 1;
-    const totalPages = 3;
 
     function getNameFromURL() {
       const params = new URLSearchParams(window.location.search);
@@ -521,7 +481,7 @@
         const notes = [
           261.63, 261.63, 293.66, 261.63, 349.23, 329.63, // Happy Birthday to you
           261.63, 261.63, 293.66, 261.63, 392.00, 349.23, // Happy Birthday to you
-          261.63, 261. loss, 523.25, 440.00, 349.23, 329.63, 293.66, // Happy Birthday dear [name]
+          261.63, 261.63, 523.25, 440.00, 349.23, 329.63, 293.66, // Happy Birthday dear [name]
           466.16, 466.16, 440.00, 349.23, 392.00, 349.23  // Happy Birthday to you
         ];
         
@@ -594,6 +554,8 @@
       if (cardOpened) return;
       cardOpened = true;
       
+      document.getElementById('card').classList.add('open');
+      
       // Start all the party effects
       launchConfetti();
       createSparkles();
@@ -611,37 +573,11 @@
       }, 20000);
     }
 
-    function turnPage() {
-      const nextPage = (currentPage % totalPages) + 1;
-      const currentPageEl = document.getElementById(`page${currentPage}`);
-      const nextPageEl = document.getElementById(`page${nextPage}`);
-
-      // Remove active class from current page
-      currentPageEl.classList.remove('active');
-      currentPageEl.classList.add('turning');
-
-      // Update card transform
-      const card = document.getElementById('card');
-      card.classList.add('open');
-      card.style.transform = `rotateY(${nextPage * 180}deg)`;
-
-      // Set next page as active after half the transition
-      setTimeout(() => {
-        nextPageEl.classList.add('active');
-        currentPageEl.classList.remove('turning');
-        currentPage = nextPage;
-      }, 625);
-
-      if (!cardOpened && nextPage === 2) {
-        startCelebration();
-      }
-    }
-
     // Event listeners
-    document.getElementById('card').addEventListener('click', turnPage);
+    document.getElementById('card').addEventListener('click', startCelebration);
     document.body.addEventListener('click', (e) => {
       if (e.target === document.body && !cardOpened) {
-        turnPage();
+        startCelebration();
       }
     });
 
