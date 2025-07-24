@@ -109,6 +109,7 @@
         inset 0 0 20px rgba(255, 182, 193, 0.6),
         0 0 60px rgba(255, 215, 0, 0.4);
       border: 6px solid transparent;
+      background-image: linear-gradient(135deg, #fff0f5 25%, #ffe4e1 100%);
       background-size: cover;
       display: flex;
       justify-content: center;
@@ -120,7 +121,23 @@
       overflow: hidden;
     }
 
-    /* Front Card Design */
+    .card-face::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, 
+        rgba(255, 240, 245, 0.9) 0%, 
+        rgba(255, 228, 225, 0.9) 25%,
+        rgba(255, 182, 193, 0.8) 50%,
+        rgba(255, 240, 245, 0.9) 75%,
+        rgba(255, 228, 225, 0.9) 100%);
+      border-radius: 20px;
+      z-index: -1;
+    }
+
     .card-front {
       color: #ff1493;
       font-size: 2.2em;
@@ -128,34 +145,11 @@
       text-shadow: 3px 3px 0 #ffd700, -1px -1px 0 #fff;
       animation: titleBounce 3s ease-in-out infinite;
       padding: 0 60px;
-      background: linear-gradient(135deg, #fff0f5 25%, #ffe4e1 100%);
-      position: relative;
     }
 
-    .card-front::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: 
-        radial-gradient(circle at 20% 30%, rgba(255, 182, 193, 0.3) 0%, transparent 20%),
-        radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.3) 0%, transparent 20%),
-        radial-gradient(circle at 40% 80%, rgba(255, 105, 180, 0.3) 0%, transparent 20%);
-      border-radius: 20px;
-      z-index: 0;
-    }
-
-    .card-front-content {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    @keyframes titleBounce {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
     }
 
     .card-front::after {
@@ -168,83 +162,13 @@
       animation: blink 2s ease-in-out infinite;
     }
 
-    .card-corner {
-      position: absolute;
-      font-size: 1.8em;
-      opacity: 0.7;
-    }
-
-    .card-corner:nth-child(1) {
-      top: 10px;
-      left: 10px;
-      transform: rotate(-15deg);
-    }
-
-    .card-corner:nth-child(2) {
-      top: 10px;
-      right: 10px;
-      transform: rotate(15deg);
-    }
-
-    .card-corner:nth-child(3) {
-      bottom: 10px;
-      left: 10px;
-      transform: rotate(15deg);
-    }
-
-    .card-corner:nth-child(4) {
-      bottom: 10px;
-      right: 10px;
-      transform: rotate(-15deg);
-    }
-
-    /* Back Card Design */
-    .card-back {
-      transform: rotateY(180deg);
-      background: linear-gradient(135deg, #ffe4e1 0%, #fff0f5 100%);
-      position: relative;
-    }
-
-    .card-back::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: 
-        radial-gradient(circle at 70% 30%, rgba(255, 215, 0, 0.3) 0%, transparent 20%),
-        radial-gradient(circle at 30% 70%, rgba(255, 105, 180, 0.3) 0%, transparent 20%),
-        radial-gradient(circle at 60% 20%, rgba(64, 224, 208, 0.3) 0%, transparent 20%);
-      border-radius: 20px;
-      z-index: 0;
-    }
-
-    .card-back-content {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .card-border {
-      position: absolute;
-      width: calc(100% - 12px);
-      height: calc(100% - 12px);
-      border: 3px dashed rgba(255, 105, 180, 0.4);
-      border-radius: 20px;
-      pointer-events: none;
-    }
-
     @keyframes blink {
       0%, 100% { opacity: 0.9; }
       50% { opacity: 0.4; }
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
     }
 
     .card-message {
@@ -257,8 +181,6 @@
       animation: shimmer 8s ease-in-out infinite;
       text-align: center;
       margin-bottom: 15px;
-      position: relative;
-      z-index: 3;
     }
 
     .card-greeting {
@@ -268,8 +190,6 @@
       line-height: 1.5em;
       text-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
       animation: fadeInUp 2s ease-out;
-      position: relative;
-      z-index: 3;
     }
 
     @keyframes fadeInUp {
@@ -284,7 +204,6 @@
       font-size: 1.5em;
       animation: iconSpin 4s linear infinite;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-      z-index: 3;
     }
 
     @keyframes iconSpin {
@@ -351,7 +270,6 @@
       font-size: 3em;
       animation: cakeBounce 2s ease-in-out infinite;
       filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-      z-index: 3;
     }
 
     @keyframes cakeBounce {
@@ -367,7 +285,6 @@
       font-size: 2em;
       animation: hatWiggle 3s ease-in-out infinite;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-      z-index: 3;
     }
 
     @keyframes hatWiggle {
@@ -384,7 +301,6 @@
       font-size: 1.8em;
       animation: giftShake 4s ease-in-out infinite;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-      z-index: 3;
     }
 
     @keyframes giftShake {
@@ -399,7 +315,6 @@
       font-size: 1.2em;
       animation: musicFloat 3s ease-in-out infinite;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-      z-index: 3;
     }
 
     @keyframes musicFloat {
@@ -419,7 +334,6 @@
       font-size: 0.9em;
       box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
       animation: badgePulse 2s ease-in-out infinite;
-      z-index: 3;
     }
 
     @keyframes badgePulse {
@@ -463,15 +377,6 @@
       90% { opacity: 1; }
       100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
-
-    .title-bounce {
-      animation: titleBounce 3s ease-in-out infinite;
-    }
-
-    @keyframes titleBounce {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
   </style>
 </head>
 <body>
@@ -485,29 +390,19 @@
   <div id="cardContainer">
     <div class="card" id="card">
       <div class="card-face card-front">
-        <div class="card-border"></div>
-        <div class="card-corner">🎀</div>
-        <div class="card-corner">🎊</div>
-        <div class="card-corner">🎁</div>
-        <div class="card-corner">🎂</div>
-        <div class="card-front-content">
-          <div class="party-hat">🎉</div>
-          <div class="birthday-icons">🎂</div>
-          <div class="gift-box">🎁</div>
-          <div class="title-bounce">HAPPY BIRTHDAY</div>
-          <div class="cake-animation">🍰</div>
-        </div>
+        <div class="party-hat">🎉</div>
+        <div class="birthday-icons">🎂</div>
+        <div class="gift-box">🎁</div>
+        HAPPY BIRTHDAY
+        <div class="cake-animation">🍰</div>
       </div>
       <div class="card-face card-back">
-        <div class="card-border"></div>
-        <div class="card-back-content">
-          <div class="card-message" id="msgLine1"></div>
-          <div class="card-greeting" id="msgLine2"></div>
-          <div class="music-note" style="top: 20%; left: 15%;">🎵</div>
-          <div class="music-note" style="top: 30%; right: 20%; animation-delay: 0.5s;">🎶</div>
-          <div class="music-note" style="bottom: 25%; left: 20%; animation-delay: 1s;">🎵</div>
-          <div class="music-note" style="bottom: 35%; right: 15%; animation-delay: 1.5s;">🎶</div>
-        </div>
+        <div class="card-message" id="msgLine1"></div>
+        <div class="card-greeting" id="msgLine2"></div>
+        <div class="music-note" style="top: 20%; left: 15%;">🎵</div>
+        <div class="music-note" style="top: 30%; right: 20%; animation-delay: 0.5s;">🎶</div>
+        <div class="music-note" style="bottom: 25%; left: 20%; animation-delay: 1s;">🎵</div>
+        <div class="music-note" style="bottom: 35%; right: 15%; animation-delay: 1.5s;">🎶</div>
       </div>
     </div>
   </div>
@@ -703,7 +598,7 @@
         const ageBadge = document.createElement('div');
         ageBadge.className = 'age-badge';
         ageBadge.textContent = `🎈 ${age} Years Amazing! 🎈`;
-        document.querySelector('.card-back-content').appendChild(ageBadge);
+        document.querySelector('.card-back').appendChild(ageBadge);
       }
       
       // Start ambient sparkles immediately
