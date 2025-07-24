@@ -40,12 +40,13 @@
       position: absolute;
       font-size: 2em;
       animation: float 6s ease-in-out infinite;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
     }
 
-    .balloon:nth-child(1) { left: 10%; animation-delay: 0s; }
-    .balloon:nth-child(2) { left: 85%; animation-delay: 1s; }
-    .balloon:nth-child(3) { left: 20%; animation-delay: 2s; }
-    .balloon:nth-child(4) { left: 75%; animation-delay: 3s; }
+    .balloon:nth-child(1) { left: 10%; animation-delay: 0s; color: #ff6b6b; }
+    .balloon:nth-child(2) { left: 85%; animation-delay: 1s; color: #4ecdc4; }
+    .balloon:nth-child(3) { left: 20%; animation-delay: 2s; color: #f7b731; }
+    .balloon:nth-child(4) { left: 75%; animation-delay: 3s; color: #9b59b6; }
 
     @keyframes float {
       0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -57,6 +58,8 @@
       color: #ffd700;
       font-size: 1.5em;
       animation: sparkle 3s linear infinite;
+      pointer-events: none;
+      z-index: 5;
     }
 
     @keyframes sparkle {
@@ -115,6 +118,7 @@
       box-sizing: border-box;
       text-align: center;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .card-face::before {
@@ -199,6 +203,7 @@
       right: 10px;
       font-size: 1.5em;
       animation: iconSpin 4s linear infinite;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     }
 
     @keyframes iconSpin {
@@ -214,21 +219,20 @@
 
     .confetti {
       position: absolute;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background-color: pink;
-      animation: fall linear infinite;
+      font-size: 1.2em;
+      animation: fall linear forwards;
       z-index: 5;
+      pointer-events: none;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     @keyframes fall {
       0% {
-        transform: translateY(-10px) rotate(0deg);
+        transform: translateY(-10px) rotate(0deg) scale(0.8);
         opacity: 1;
       }
       100% {
-        transform: translateY(100vh) rotate(720deg);
+        transform: translateY(100vh) rotate(720deg) scale(1.2);
         opacity: 0;
       }
     }
@@ -240,6 +244,7 @@
       border-radius: 50%;
       animation: firework 2s ease-out infinite;
       z-index: 5;
+      pointer-events: none;
     }
 
     @keyframes firework {
@@ -264,6 +269,7 @@
       transform: translateX(-50%);
       font-size: 3em;
       animation: cakeBounce 2s ease-in-out infinite;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
     }
 
     @keyframes cakeBounce {
@@ -278,6 +284,7 @@
       transform: translateX(-50%);
       font-size: 2em;
       animation: hatWiggle 3s ease-in-out infinite;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
 
     @keyframes hatWiggle {
@@ -293,6 +300,7 @@
       transform: translateY(-50%);
       font-size: 1.8em;
       animation: giftShake 4s ease-in-out infinite;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
 
     @keyframes giftShake {
@@ -306,6 +314,7 @@
       color: #ff69b4;
       font-size: 1.2em;
       animation: musicFloat 3s ease-in-out infinite;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     }
 
     @keyframes musicFloat {
@@ -449,8 +458,8 @@
     }
 
     function launchConfetti() {
-      const confettiColors = ['#ff69b4', '#ffd700', '#40e0d0', '#ff6b6b', '#9b59b6', '#2ecc71', '#e74c3c', '#f39c12'];
       const confettiShapes = ['🎉', '🎊', '✨', '⭐', '💫', '🎈', '🍬', '🪅'];
+      const confettiColors = ['#ff69b4', '#ffd700', '#40e0d0', '#ff6b6b', '#9b59b6', '#2ecc71', '#e74c3c', '#f39c12'];
       
       for (let i = 0; i < 100; i++) {
         setTimeout(() => {
@@ -467,10 +476,6 @@
           setTimeout(() => confetti.remove(), 8000);
         }, i * 30);
       }
-    }
-
-    function showCelebrationMessage() {
-      // Removed - no longer showing the surprise message
     }
 
     function playBirthdayTune() {
@@ -590,7 +595,10 @@
       document.getElementById('msgLine2').textContent = `Wishing you a happy birthday and a wonderful year! 🎂✨🎉`;
       
       if (age) {
-        document.getElementById('ageBadge').textContent = `🎈 ${age} Years Amazing! 🎈`;
+        const ageBadge = document.createElement('div');
+        ageBadge.className = 'age-badge';
+        ageBadge.textContent = `🎈 ${age} Years Amazing! 🎈`;
+        document.querySelector('.card-back').appendChild(ageBadge);
       }
       
       // Start ambient sparkles immediately
